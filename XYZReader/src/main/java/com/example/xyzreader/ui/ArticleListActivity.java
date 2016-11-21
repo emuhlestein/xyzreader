@@ -3,6 +3,8 @@ package com.example.xyzreader.ui;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -39,13 +41,14 @@ import static com.example.xyzreader.ui.ArticleDetailActivity.EXTRA_TRANSITION_NA
  * activity presents a grid of items as cards.
  */
 public class ArticleListActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>, OnAppBarLayoutCollapseListener {
     public static final String TAG = ArticleListActivity.class.getSimpleName();
     private Toolbar mToolbar;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private Bundle mTmpReenterState;
     private boolean mIsDetailsActivityStarted;
+    private android.support.design.widget.CollapsingToolbarLayout mCollapsingToolbarLayout;
 
     private final SharedElementCallback mCallback = new SharedElementCallback() {
         @Override
@@ -77,19 +80,25 @@ public class ArticleListActivity extends AppCompatActivity implements
                     sharedElements.put(navigationBar.getTransitionName(), navigationBar);
                 }
                 if (statusBar != null) {
-                    String name = statusBar.getTransitionName();
                     names.add(statusBar.getTransitionName());
                     sharedElements.put(statusBar.getTransitionName(), statusBar);
                 }
             }
         }
     };
+    private AppBarLayout mAppBarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
         setExitSharedElementCallback(mCallback);
+
+        mCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+        //mAppBarLayout.addOnOffsetChangedListener(new ScrollingHelper(mAppBarLayout.getTotalScrollRange(), this));
+
+        mCollapsingToolbarLayout.setTitle("xyzreader");
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -184,6 +193,11 @@ public class ArticleListActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mRecyclerView.setAdapter(null);
+    }
+
+    @Override
+    public void onAppBarLayoutCollapse(boolean isCollapsed) {
+        mCollapsingToolbarLayout.setTitle("xyzreader");
     }
 
     private class Adapter extends RecyclerView.Adapter<ViewHolder> {

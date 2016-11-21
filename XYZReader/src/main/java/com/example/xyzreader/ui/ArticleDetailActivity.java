@@ -13,7 +13,6 @@ import android.support.v4.app.SharedElementCallback;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,7 +77,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_detail);
 
-        // TODO just uncommented these out
         postponeEnterTransition();
         setEnterSharedElementCallback(mCallback);
 
@@ -146,11 +144,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         data.putExtra(EXTRA_CURRENT_ALBUM_POSITION, mCurrentPosition);
         String transitionName = mCurrentDetailsFragment.getPhotoImage().getTransitionName();
         data.putExtra(EXTRA_TRANSITION_NAME, transitionName);
-        Log.d(TAG, "Enter finishAfterTransition");
-        Log.d(TAG, "Start Pos: " + mStartingPosition);
-        Log.d(TAG, "Current Pos: " + mCurrentPosition);
-        Log.d(TAG, "Transition Name: " + transitionName);
-        Log.d(TAG, "Leave finishAfterTransition");
         setResult(RESULT_OK, data);
         super.finishAfterTransition();
     }
@@ -201,7 +194,6 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         @Override
         public int getCount() {
-            int count =  (mCursor != null) ? mCursor.getCount() : 0;
             return (mCursor != null) ? mCursor.getCount() : 0;
         }
 

@@ -92,7 +92,6 @@ public class ArticleDetailMaterialFragment extends Fragment implements
         mTitle = getArguments().getString(ARG_TITLE);
         mIsTransitioning = savedInstanceState == null && mStartingPosition == mCurrentPosition;
         mBackgroundImageFadeMillis = 1000;
-
         mRestartPostponedTranstion = mCurrentPosition == mStartingPosition;
     }
 
@@ -167,8 +166,6 @@ public class ArticleDetailMaterialFragment extends Fragment implements
             RequestCreator photoRequest = Picasso.with(getActivity()).load(url); //.into(mPhotoView);
             photoRequest.into(mPhotoView, mImageCallback);
 
-
-
             bylineView.setText(Html.fromHtml(
                     DateUtils.getRelativeTimeSpanString(
                             mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
@@ -178,32 +175,6 @@ public class ArticleDetailMaterialFragment extends Fragment implements
                             + mCursor.getString(ArticleLoader.Query.AUTHOR)
                             + "</font>"));
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
-/*
-            ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
-                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
-                        @Override
-                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                            Bitmap bitmap = imageContainer.getBitmap();
-
-                            String name = "";
-                            if (bitmap != null) {
-                                Palette p = Palette.generate(bitmap, 12);
-                                //mMutedColor = p.getDarkMutedColor(0xFF333333);
-                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
-                                name = mPhotoView.getTransitionName();
-                                //mRootView.findViewById(R.id.meta_bar)
-                                //        .setBackgroundColor(mMutedColor);
-                                //updateStatusBar();
-                            }
-                            startPostponedEnterTransition();
-                        }
-
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-                            startPostponedEnterTransition();
-                        }
-                    });
-                    */
         } else {
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
@@ -228,7 +199,6 @@ public class ArticleDetailMaterialFragment extends Fragment implements
         }
 
         mCursor = cursor;
-        Log.i(TAG, "Column Count: " + mCursor.getColumnCount());
         if (mCursor != null && !mCursor.moveToFirst()) {
             Log.e(TAG, "Error reading item detail cursor");
             mCursor.close();
