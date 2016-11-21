@@ -101,7 +101,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
         mPager.setCurrentItem(mCurrentPosition);
 
-
         mPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageScrollStateChanged(int state) {
@@ -197,7 +196,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         @Override
         public Fragment getItem(int position) {
             mCursor.moveToPosition(position);
-            return ArticleDetailMaterialFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID), position, mStartingPosition);
+            return ArticleDetailMaterialFragment.newInstance(mCursor.getLong(ArticleLoader.Query._ID), position, mStartingPosition, mCursor.getString(ArticleLoader.Query.TITLE));
         }
 
         @Override
@@ -209,7 +208,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
             super.setPrimaryItem(container, position, object);
-            Fragment fragment = (Fragment)object;
             mCurrentDetailsFragment = (ArticleDetailMaterialFragment)object;
         }
     }

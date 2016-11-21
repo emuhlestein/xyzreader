@@ -212,7 +212,8 @@ public class ArticleListActivity extends AppCompatActivity implements
         public void onBindViewHolder(ViewHolder holder, int position) {
             long itemId = getItemId(holder.getAdapterPosition());
             String title = mCursor.getString(ArticleLoader.Query.TITLE);
-            holder.bind(position, itemId, title);
+            String url = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
+            holder.bind(position, itemId, title, url);
             mCursor.moveToPosition(position);
             holder.titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
             holder.subtitleView.setText(
@@ -249,10 +250,12 @@ public class ArticleListActivity extends AppCompatActivity implements
             view.setOnClickListener(this);
         }
 
-        public void bind(int position, long itemId, String title) {
+        public void bind(int position, long itemId, String title, String url) {
+            //Picasso.with(ArticleListActivity.this).load(url).into(thumbnailView);
             mCurrentPosition = position;
             mItemId = itemId;
             thumbnailView.setTransitionName(title);
+            thumbnailView.setTag(title);
         }
 
         @Override

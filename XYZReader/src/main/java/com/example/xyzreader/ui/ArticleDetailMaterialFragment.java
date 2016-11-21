@@ -1,7 +1,6 @@
 package com.example.xyzreader.ui;
 
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -29,10 +27,11 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
 /**
  * Created by edm on 10/18/2016.
@@ -44,6 +43,7 @@ public class ArticleDetailMaterialFragment extends Fragment implements
     public static final String ARG_ITEM_ID = "item_id";
     public static final String ARG_CURRENT_POSITION = "current_position";
     public static final String ARG_STARTING_POSITION = "starting_position";
+    public static final String ARG_TITLE = "title";
 
     private View mRootView;
     private ImageView mPhotoView;
@@ -54,15 +54,29 @@ public class ArticleDetailMaterialFragment extends Fragment implements
     private long mItemId;
     private int mStartingPosition;
     private int mCurrentPosition;
+    private String mTitle;
     private boolean mIsTransitioning;
     private long mBackgroundImageFadeMillis;
+    private boolean mRestartPostponedTranstion;
 
-    public static ArticleDetailMaterialFragment newInstance(long itemId, int currentPosition, int startingPosition) {
-        int spos = startingPosition;
+    private final Callback mImageCallback = new Callback() {
+        @Override
+        public void onSuccess() {
+            startPostponedEnterTransition();
+        }
+
+        @Override
+        public void onError() {
+            startPostponedEnterTransition();
+        }
+    };
+
+    public static ArticleDetailMaterialFragment newInstance(long itemId, int currentPosition, int startingPosition, String title) {
         Bundle args = new Bundle();
         args.putLong(ARG_ITEM_ID, itemId);
         args.putInt(ARG_CURRENT_POSITION, currentPosition);
         args.putInt(ARG_STARTING_POSITION, startingPosition);
+        args.putString(ARG_TITLE, title);
         ArticleDetailMaterialFragment fragment = new ArticleDetailMaterialFragment();
         fragment.setArguments(args);
         return fragment;
@@ -75,8 +89,11 @@ public class ArticleDetailMaterialFragment extends Fragment implements
         mItemId = getArguments().getLong(ARG_ITEM_ID);
         mCurrentPosition = getArguments().getInt(ARG_CURRENT_POSITION);
         mStartingPosition = getArguments().getInt(ARG_STARTING_POSITION);
+        mTitle = getArguments().getString(ARG_TITLE);
         mIsTransitioning = savedInstanceState == null && mStartingPosition == mCurrentPosition;
         mBackgroundImageFadeMillis = 1000;
+
+        mRestartPostponedTranstion = mCurrentPosition == mStartingPosition;
     }
 
     @Nullable
@@ -89,13 +106,14 @@ public class ArticleDetailMaterialFragment extends Fragment implements
         mAppBarLayout = (AppBarLayout) mRootView.findViewById(R.id.appbar);
         mAppBarLayout.addOnOffsetChangedListener(new ScrollingHelper(mAppBarLayout.getTotalScrollRange(), this));
 
+        mPhotoView.setTransitionName(mTitle);
+
         Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity)getActivity();
         activity.setSupportActionBar(toolbar);
 
-
-
         getLoaderManager().initLoader(0, null, this);
+
         return mRootView;
     }
 
@@ -139,16 +157,16 @@ public class ArticleDetailMaterialFragment extends Fragment implements
         bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
         if (mCursor != null) {
-            //mRootView.setAlpha(0);
-            //mRootView.setVisibility(View.VISIBLE);
-            //mRootView.animate().alpha(1);
+            mRootView.setAlpha(0);
+            mRootView.setVisibility(View.VISIBLE);
+            mRootView.animate().alpha(1);
             String title = mCursor.getString(ArticleLoader.Query.TITLE);
             String url = mCursor.getString(ArticleLoader.Query.PHOTO_URL);
             titleView.setText(title);
             mPhotoView.setTransitionName(title);
-            /*
-            Picasso.with(getActivity()).load(url).into(mPhotoView);
-            */
+            RequestCreator photoRequest = Picasso.with(getActivity()).load(url); //.into(mPhotoView);
+            photoRequest.into(mPhotoView, mImageCallback);
+
 
 
             bylineView.setText(Html.fromHtml(
@@ -160,21 +178,24 @@ public class ArticleDetailMaterialFragment extends Fragment implements
                             + mCursor.getString(ArticleLoader.Query.AUTHOR)
                             + "</font>"));
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
-
+/*
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
                         public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
                             Bitmap bitmap = imageContainer.getBitmap();
-                            startPostponedEnterTransition();
+
+                            String name = "";
                             if (bitmap != null) {
                                 Palette p = Palette.generate(bitmap, 12);
                                 //mMutedColor = p.getDarkMutedColor(0xFF333333);
                                 mPhotoView.setImageBitmap(imageContainer.getBitmap());
+                                name = mPhotoView.getTransitionName();
                                 //mRootView.findViewById(R.id.meta_bar)
                                 //        .setBackgroundColor(mMutedColor);
                                 //updateStatusBar();
                             }
+                            startPostponedEnterTransition();
                         }
 
                         @Override
@@ -182,11 +203,13 @@ public class ArticleDetailMaterialFragment extends Fragment implements
                             startPostponedEnterTransition();
                         }
                     });
+                    */
         } else {
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
             bylineView.setText("N/A" );
             bodyView.setText("N/A");
+
         }
     }
 
@@ -217,8 +240,8 @@ public class ArticleDetailMaterialFragment extends Fragment implements
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mCursor = null;
         bindViews();
+        mCursor = null;
     }
 
     @Override
