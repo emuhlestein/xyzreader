@@ -49,6 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/layout_margin"
         android:src="@drawable/fab_plus"
+        app:backgroundTint="@color/accentColor"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end" />
 

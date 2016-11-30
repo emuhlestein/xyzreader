@@ -11,6 +11,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
@@ -101,7 +102,7 @@ public class ArticleDetailMaterialFragment extends Fragment implements
         mRootView = inflater.inflate(R.layout.fragment_details_material_layout, container, false);
         mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
         mCollapsingToolbarLayout = (CollapsingToolbarLayout) mRootView.findViewById(R.id.collapsing_toolbar);
-        mCollapsingToolbarLayout.setBackgroundColor(getResources().getColor(R.color.cardview_dark_background));
+        //mCollapsingToolbarLayout.setBackgroundColor(getResources().getColor(R.color.cardview_dark_background));
         mAppBarLayout = (AppBarLayout) mRootView.findViewById(R.id.appbar);
         mAppBarLayout.addOnOffsetChangedListener(new ScrollingHelper(mAppBarLayout.getTotalScrollRange(), this));
 
@@ -223,7 +224,9 @@ public class ArticleDetailMaterialFragment extends Fragment implements
         if(isCollapsed) {
             String title = mCursor.getString(ArticleLoader.Query.TITLE);
             mCollapsingToolbarLayout.setTitle(" ");
+            mCollapsingToolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(getContext(), R.color.textColor));
             titleView.setText(title);
+            titleView.setTextColor(ContextCompat.getColor(getContext(), R.color.accentColor));
         } else {
             String title = mCursor.getString(ArticleLoader.Query.TITLE);
             mCollapsingToolbarLayout.setTitle(title);

@@ -4,22 +4,22 @@
     density="xxhdpi"
     format="8"
     plugin-version="2.2.0"
-    timestamp="257091594182593"
+    timestamp="957218430695035"
     token="-658585065659752723"
     verifier="FULL_BUILD_REQUESTED" >
 
     <task
         name="javac"
-        duration="530" />
+        duration="0" />
     <task
         name="instant-run-dex"
         duration="0" />
     <task
         name="instant-run-transform"
-        duration="55" />
+        duration="0" />
     <task
         name="verifier"
-        duration="15" />
+        duration="0" />
 
     <artifact
         location="C:\Users\edm\AndroidStudioProjects\xyzreader\XYZReader\build\outputs\apk\XYZReader-debug.apk"
