@@ -1,5 +1,6 @@
 package com.example.xyzreader.ui;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -8,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -56,6 +58,7 @@ public class ArticleDetailMaterialFragment extends Fragment implements
     private int mStartingPosition;
     private int mCurrentPosition;
     private String mTitle;
+    private String mMessageBody;
     private boolean mIsTransitioning;
     private long mBackgroundImageFadeMillis;
     private boolean mRestartPostponedTranstion;
@@ -111,6 +114,19 @@ public class ArticleDetailMaterialFragment extends Fragment implements
         Toolbar toolbar = (Toolbar) mRootView.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity)getActivity();
         activity.setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton)mRootView.findViewById(R.id.shareActionButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String shareBody = mTitle;
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, shareBody);
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, mMessageBody);
+                startActivity(Intent.createChooser(sharingIntent,  "test string"));
+            }
+        });
 
         getLoaderManager().initLoader(0, null, this);
 
@@ -175,7 +191,8 @@ public class ArticleDetailMaterialFragment extends Fragment implements
                             + " by <font color='#ffffff'>"
                             + mCursor.getString(ArticleLoader.Query.AUTHOR)
                             + "</font>"));
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY)));
+            mMessageBody = mCursor.getString(ArticleLoader.Query.BODY);
+            bodyView.setText(Html.fromHtml(mMessageBody));
         } else {
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
