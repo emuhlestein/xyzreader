@@ -5,6 +5,9 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -48,6 +51,7 @@ public class ArticleListActivity extends AppCompatActivity implements
     private RecyclerView mRecyclerView;
     private Bundle mTmpReenterState;
     private boolean mIsDetailsActivityStarted;
+    private CoordinatorLayout mCoordinatorLayout;
     private android.support.design.widget.CollapsingToolbarLayout mCollapsingToolbarLayout;
 
     private final SharedElementCallback mCallback = new SharedElementCallback() {
@@ -109,6 +113,18 @@ public class ArticleListActivity extends AppCompatActivity implements
         });
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
+
+        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.commentActionButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, "Add new article", Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+        });
+
         getSupportLoaderManager().initLoader(0, null, this);
 
         if (savedInstanceState == null) {
