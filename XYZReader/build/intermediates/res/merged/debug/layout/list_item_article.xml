@@ -19,7 +19,7 @@
         <com.example.xyzreader.ui.DynamicHeightNetworkImageView
             android:id="@+id/thumbnail"
             android:transitionName="tImage"
-            android:layout_width="100dp"
+            android:layout_width="match_parent"
             android:layout_height="100dp"
             android:background="@color/photo_placeholder" />
 
@@ -44,7 +44,7 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingBottom="16dp"
-            android:textColor="#6000"
+            android:textColor="@color/textColorSec"
             android:maxLines="1"
             android:singleLine="true"
             android:ellipsize="end" />
